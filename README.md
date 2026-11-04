@@ -1,3 +1,5 @@
 Esta será uma demonstração da integração entre git e fabric
 
 Criaremos um projeto no Power BI completo e intregaremos
+
+Depois faremos isso com o fabric
