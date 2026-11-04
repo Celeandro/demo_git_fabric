@@ -1,8 +1,55 @@
 table cotacoes
 	lineageTag: 275e96d1-c8cf-4474-87f5-69c72dd943d0
 
+	measure 'Cotação do dia' = ```
+			AVERAGE(cotacoes[Cotacao]) 
+			```
+		displayFolder: Medidas
+		lineageTag: 66ebb6bf-ce8d-44b8-abc7-71d095285973
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cotação corrigida' = ```
+			
+			
+			VAR __DataCtx = MAX(calendario[Data]) 
+			
+			VAR __UltimaDataComCotacao = 
+			    CALCULATE(
+			        LASTNONBLANK(calendario[Data], [Cotação do dia]),
+			        calendario[Data] <= __DataCtx
+			    )
+			
+			RETURN
+			    CALCULATE(
+			        [Cotação do dia],
+			        calendario[Data] = __UltimaDataComCotacao
+			    )
+			
+			```
+		displayFolder: Medidas
+		lineageTag: 465b9e0c-3ebc-42a7-bf16-3b8e7679080c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total R$' = ```
+			
+			SUMX(
+			    moedas,
+			    SUMX(
+			        calendario,
+			        COALESCE([Cotação corrigida], 1) * [Valor Total] 
+			    )
+			) 
+			```
+		displayFolder: Medidas
+		lineageTag: 222db844-b51b-4191-8fcf-ecf1e5621849
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column Moeda
 		dataType: string
+		displayFolder: Colunas
 		lineageTag: 2bdc69b6-26da-4597-bc53-1b648bed8f9d
 		summarizeBy: none
 		sourceColumn: Moeda
@@ -12,6 +59,7 @@ table cotacoes
 	column DataHora
 		dataType: dateTime
 		formatString: General Date
+		displayFolder: Colunas
 		lineageTag: 4b763107-a94f-4b5e-9ed7-d70dbf4925a5
 		summarizeBy: none
 		sourceColumn: DataHora
@@ -20,6 +68,7 @@ table cotacoes
 
 	column Cotacao
 		dataType: double
+		displayFolder: Colunas
 		lineageTag: 2701e584-04ba-4af5-95ab-5a53addb2818
 		summarizeBy: none
 		sourceColumn: Cotacao
@@ -30,6 +79,7 @@ table cotacoes
 
 	column TipoBoletim
 		dataType: string
+		displayFolder: Colunas
 		lineageTag: f02ecceb-7e08-4bea-98ed-85b583ea9108
 		summarizeBy: none
 		sourceColumn: TipoBoletim
@@ -39,6 +89,7 @@ table cotacoes
 	column Data
 		dataType: dateTime
 		formatString: Long Date
+		displayFolder: Colunas
 		lineageTag: 1b4b77ee-c050-4c04-b272-142facf5ed5d
 		summarizeBy: none
 		sourceColumn: Data
